@@ -1,9 +1,4 @@
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
 streamlit
+pandas
+scikit-learn
 joblib
-notebook
-ipykernel
