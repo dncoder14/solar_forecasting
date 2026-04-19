@@ -1,9 +1,3 @@
-"""
-Advanced Interactive Visualizations for the Solar Dashboard.
-Uses Plotly to create high-quality, real-world data stories that make
-complex ML data understandable at a single glance.
-"""
-
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
@@ -12,9 +6,7 @@ import math
 from src.config import COLORS, SUNRISE_HOUR, SUNSET_HOUR
 
 
-# ── Helper: Consistent Layout Theme ─────────────────────────────────
 def _base_layout(**overrides):
-    """Return a dark-themed Plotly layout dict, merged with overrides."""
     base = dict(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(15,23,42,0.6)",
@@ -39,17 +31,11 @@ def _base_layout(**overrides):
     return base
 
 
-# ── 1.  Power Curve: Predicted Power vs Solar Radiation ──────────────
 def create_power_curve(df, predicted_col="generated_power_kw", radiation_col="shortwave_radiation_backwards_sfc"):
-    """
-    Dual-axis line chart: Predicted Power (kW) vs Solar Radiation (W/m²).
-    Sampled for performance when df is large.
-    """
     sample = df.sample(min(500, len(df)), random_state=42).sort_values(radiation_col)
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    # Power trace
     fig.add_trace(
         go.Scatter(
             x=sample.index,
@@ -63,7 +49,6 @@ def create_power_curve(df, predicted_col="generated_power_kw", radiation_col="sh
         secondary_y=False,
     )
 
-    # Radiation trace
     fig.add_trace(
         go.Scatter(
             x=sample.index,
@@ -88,12 +73,7 @@ def create_power_curve(df, predicted_col="generated_power_kw", radiation_col="sh
     return fig
 
 
-# ── 2.  Performance Gauge (Speedometer) ──────────────────────────────
 def create_accuracy_gauge(score, label="Model Accuracy (R²)"):
-    """
-    Speedometer-style gauge for model accuracy or confidence.
-    Score should be between 0 and 1.
-    """
     score_pct = score * 100
 
     if score >= 0.90:
@@ -114,7 +94,10 @@ def create_accuracy_gauge(score, label="Model Accuracy (R²)"):
             mode="gauge+number+delta",
             value=score_pct,
             number=dict(suffix="%", font=dict(size=42, color=COLORS["text"])),
-            title=dict(text=f"{label}<br><span style='font-size:14px;color:{COLORS['text_muted']}'>{rating}</span>", font=dict(size=16)),
+            title=dict(
+                text=f"{label}<br><span style='font-size:14px;color:{COLORS['text_muted']}'>{rating}</span>",
+                font=dict(size=16),
+            ),
             delta=dict(reference=75, increasing=dict(color=COLORS["accent"]), decreasing=dict(color=COLORS["danger"])),
             gauge=dict(
                 axis=dict(range=[0, 100], tickwidth=1, tickcolor=COLORS["text_muted"], dtick=20),
@@ -141,20 +124,7 @@ def create_accuracy_gauge(score, label="Model Accuracy (R²)"):
     return fig
 
 
-# ── 3.  24-Hour Simulation Graph ─────────────────────────────────────
 def create_24h_simulation(model, base_features, feature_names, radiation_idx=None):
-    """
-    Simulates predicted power across a 24-hour period by varying
-    solar radiation and zenith angle realistically from sunrise to sunset.
-
-    Parameters
-    ----------
-    model : trained sklearn model
-    base_features : list of float  – baseline input feature values
-    feature_names : list of str    – corresponding column names
-    radiation_idx : int or None    – index of the radiation column
-    """
-    # Identify key column indices
     rad_col = "shortwave_radiation_backwards_sfc"
     zen_col = "zenith"
     temp_col = "temperature_2_m_above_gnd"
@@ -171,7 +141,6 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
     for h in hours:
         features = list(base_features)
 
-        # Simulate solar radiation bell curve (peak at solar noon ~12:30)
         if SUNRISE_HOUR <= h <= SUNSET_HOUR and radiation_idx is not None:
             noon = (SUNRISE_HOUR + SUNSET_HOUR) / 2
             spread = (SUNSET_HOUR - SUNRISE_HOUR) / 2
@@ -184,7 +153,6 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
                 features[radiation_idx] = 0.0
             radiations.append(0.0)
 
-        # Simulate zenith angle (high at dawn/dusk, low at noon)
         if zenith_idx is not None:
             if SUNRISE_HOUR <= h <= SUNSET_HOUR:
                 noon = (SUNRISE_HOUR + SUNSET_HOUR) / 2
@@ -192,17 +160,17 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
             else:
                 features[zenith_idx] = 90.0
 
-        # Slight temperature shift through day
         if temp_idx is not None:
-            features[temp_idx] = base_features[temp_idx] + 3 * math.sin(math.pi * (h - 6) / 12) if 6 <= h <= 18 else base_features[temp_idx] - 2
+            if 6 <= h <= 18:
+                features[temp_idx] = base_features[temp_idx] + 3 * math.sin(math.pi * (h - 6) / 12)
+            else:
+                features[temp_idx] = base_features[temp_idx] - 2
 
         pred = model.predict([features])[0]
         powers.append(max(0, pred))
 
-    # ── Build the figure ─────────────────────────────────────────────
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    # Daylight band
     fig.add_vrect(
         x0=SUNRISE_HOUR, x1=SUNSET_HOUR,
         fillcolor="rgba(245,158,11,0.07)",
@@ -212,7 +180,6 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
         annotation_font_color=COLORS["text_muted"],
     )
 
-    # Power area
     fig.add_trace(
         go.Scatter(
             x=hours, y=powers,
@@ -227,7 +194,6 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
         secondary_y=False,
     )
 
-    # Radiation overlay
     fig.add_trace(
         go.Scatter(
             x=hours, y=radiations,
@@ -239,7 +205,6 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
         secondary_y=True,
     )
 
-    # Sunrise / Sunset markers
     fig.add_vline(x=SUNRISE_HOUR, line_dash="dot", line_color=COLORS["primary_light"],
                   annotation_text="🌅 Sunrise", annotation_position="top right",
                   annotation_font_color=COLORS["primary_light"])
@@ -266,12 +231,8 @@ def create_24h_simulation(model, base_features, feature_names, radiation_idx=Non
     return fig, powers, radiations
 
 
-# ── 4.  Feature Correlation Heatmap ──────────────────────────────────
 def create_feature_importance_chart(df, target_col="generated_power_kw", top_n=8):
-    """
-    Horizontal bar chart showing top N feature correlations with target.
-    """
-    correlations = df.corr()[target_col].drop(target_col).abs().sort_values(ascending=True).tail(top_n)
+    correlations = df.corr(numeric_only=True)[target_col].drop(target_col).abs().sort_values(ascending=True).tail(top_n)
 
     colors = [
         f"rgba(245,158,11,{0.4 + 0.6 * i / len(correlations)})"
@@ -298,11 +259,7 @@ def create_feature_importance_chart(df, target_col="generated_power_kw", top_n=8
     return fig
 
 
-# ── 5.  Power Distribution Histogram ────────────────────────────────
 def create_power_distribution(df, col="generated_power_kw"):
-    """
-    Distribution of generated power values from the dataset.
-    """
     fig = go.Figure(
         go.Histogram(
             x=df[col],

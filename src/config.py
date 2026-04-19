@@ -1,30 +1,22 @@
-"""
-Configuration constants for the Solar Forecasting Dashboard.
-Centralizes all theme colors, labels, and default values.
-"""
-
-# ── Application Metadata ─────────────────────────────────────────────
 APP_TITLE = "SolarVista — Intelligent Solar Management"
 APP_ICON = "☀️"
 APP_DESCRIPTION = "AI-Powered Solar Energy Forecasting & Optimization Platform"
 
-# ── Color Palette (Premium Solar Theme) ──────────────────────────────
 COLORS = {
-    "primary": "#F59E0B",       # Amber / Solar Gold
+    "primary": "#F59E0B",
     "primary_light": "#FBBF24",
-    "secondary": "#3B82F6",     # Sky Blue
-    "accent": "#10B981",        # Emerald Green
-    "danger": "#EF4444",        # Red
-    "background": "#0F172A",    # Slate 900
-    "surface": "#1E293B",       # Slate 800
-    "surface_light": "#334155", # Slate 700
-    "text": "#F8FAFC",          # Slate 50
-    "text_muted": "#94A3B8",    # Slate 400
+    "secondary": "#3B82F6",
+    "accent": "#10B981",
+    "danger": "#EF4444",
+    "background": "#0F172A",
+    "surface": "#1E293B",
+    "surface_light": "#334155",
+    "text": "#F8FAFC",
+    "text_muted": "#94A3B8",
     "gradient_start": "#F59E0B",
     "gradient_end": "#EF4444",
 }
 
-# ── Feature Labels (Human-readable names for CSV columns) ───────────
 FEATURE_LABELS = {
     "temperature_2_m_above_gnd": ("🌡️ Temperature (°C)", "Temperature at 2m above ground level", -20.0, 50.0, 25.0),
     "relative_humidity_2_m_above_gnd": ("💧 Relative Humidity (%)", "Humidity percentage at 2m", 0.0, 100.0, 50.0),
@@ -48,14 +40,11 @@ FEATURE_LABELS = {
     "azimuth": ("🔄 Azimuth Angle (°)", "Sun's azimuth angle", 0.0, 360.0, 180.0),
 }
 
-# ── Simulation Defaults ──────────────────────────────────────────────
 SIMULATION_HOURS = list(range(0, 24))
 SUNRISE_HOUR = 6
 SUNSET_HOUR = 18
 
-# ── Electricity Rate (INR per kWh) for savings estimation ────────────
-ELECTRICITY_RATE = 7.50  # ₹/kWh average India domestic
+ELECTRICITY_RATE = 7.50
 
-# ── Model Performance (from training notebook) ──────────────────────
-MODEL_R2_SCORE = 0.9312  # Approximate from training
-MODEL_MAE = 187.5        # Approximate MAE in kW
+MODEL_R2_SCORE = 0.9312
+MODEL_MAE = 187.5
