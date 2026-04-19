@@ -25,9 +25,43 @@ The Ved AI agent provides intelligent solar optimization through:
 - **Structured Output**: JSON reports with summary, risk assessment, and action plans
 - **Real-time Integration**: Processes live forecast data for immediate insights
 
-## Project Structure
+## Setup & Installation
 
-```
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd solar_forecasting
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Set up Google Gemini API**
+   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - The app will prompt for the API key in the sidebar
+
+4. **Run the application**
+   ```bash
+   streamlit run app.py
+   ```
+
+## Usage
+
+1. **Explore Dashboard**: View real-time metrics and data visualizations
+2. **Make Predictions**: Input weather conditions to get solar power forecasts
+3. **AI Optimization**: Use the Ved AI agent for intelligent grid optimization recommendations
+
+## AI Agent Architecture
+
+The Ved AI agent uses a structured reasoning pipeline:
+
+1. **ForecastAnalyst**: Analyzes raw prediction data
+2. **KnowledgeRetriever**: Queries RAG system for relevant guidelines
+3. **GridOptimizer**: Synthesizes insights into actionable recommendations
+
+All outputs follow a consistent JSON schema for reliable integration.
 solar_forecasting/
 ├── app.py                    # Main Streamlit dashboard
 ├── src/
