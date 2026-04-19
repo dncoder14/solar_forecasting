@@ -1,108 +1,98 @@
-# ☀️ SolarVista — Solar Energy Forecasting Dashboard
+# ☀️ SolarVista — Intelligent Solar Management & Optimization
 
-AI-powered solar energy generation forecasting using Machine Learning and interactive data visualization with intelligent optimization assistance.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge.svg)](https://huggingface.co/spaces/) <!-- Placeholder for Dhiraj to add HF link -->
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+**SolarVista** is an end-to-end AI-driven platform designed to forecast solar energy generation and provide agentic optimization strategies for smarter grid management. By combining high-accuracy Machine Learning with Large Language Models (LLMs), SolarVista transforms raw weather data into actionable energy intelligence.
 
-- **Dashboard Overview** — Real-time metrics, power vs radiation curves, model accuracy gauge
-- **Weather & Analytics** — Interactive weather input form with grouped parameters, instant ML predictions, 24-hour power simulation
-- **🤖 Ved AI Optimization Assistant** — Agentic AI system that transforms raw predictions into actionable grid optimization recommendations using RAG and structured reasoning
+---
 
-## Tech Stack
+## 🚀 Key Features
 
-- **ML Model**: Random Forest Regressor (scikit-learn)
-- **AI Agent**: LangGraph + Google Gemini 1.5 Flash + FAISS RAG
-- **Frontend**: Streamlit with custom dark theme
-- **Visualization**: Plotly (interactive charts, gauges, simulations)
-- **Data**: 4200+ weather observation records
+### 1. High-Accuracy Forecasting
+- **ML Engine**: Optimized Random Forest Regressor trained on 4200+ meteorological records.
+*   **Performance**: R² Score of **0.93** and MAE of **187.5 kW**.
+- **Preprocessing**: Robust pipeline handling temperature, radiation, and sun geometry.
 
-## AI Agent Features
+### 2. Agentic AI Optimization (Milestone 2)
+- **"Ved" AI Assistant**: A reasoning engine built with **LangGraph** that analyzes forecasts to suggest grid maneuvers.
+- **RAG Capability**: Uses **FAISS** vector search to ground AI advice in real-world grid stability guidelines.
+- **Structured Reports**: AI generates JSON-based optimization plans covering Battery Management, Risk Assessment, and Load Balancing.
 
-The Ved AI agent provides intelligent solar optimization through:
+### 3. Professional Dashboard
+- **Interactive Visuals**: Rich Plotly charts for power curves, accuracy gauges, and 24-hour simulations.
+- **User-Centric Forms**: Grouped weather inputs for an intuitive desktop and mobile experience.
+- **Extension**: Automated **PDF Export** for professional energy optimization reports.
 
-- **Multi-step Reasoning**: Forecast analysis → Knowledge retrieval → Optimization synthesis
-- **RAG System**: Context-aware recommendations based on grid management guidelines
-- **Structured Output**: JSON reports with summary, risk assessment, and action plans
-- **Real-time Integration**: Processes live forecast data for immediate insights
+---
 
-## Setup & Installation
+## 🏗️ System Architecture
 
-1. **Clone the repository**
+```mermaid
+flowchart TD
+    subgraph Input_Layer
+        A[Weather API/User Input]
+    end
+
+    subgraph Intelligence_Layer
+        B[ML Engine - Random Forest]
+        C[Agentic AI - LangGraph]
+        D[RAG Knowledge Base - FAISS]
+    end
+
+    subgraph Output_Layer
+        E[Plotly Data Visuals]
+        F[Optimization Report]
+        G[PDF Export Utility]
+    end
+
+    A --> B
+    B --> C
+    D --> C
+    C --> F
+    B --> E
+    F --> G
+```
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Streamlit, Custom CSS
+- **Visualization**: Plotly
+- **Machine Learning**: Scikit-Learn, Joblib, Pandas, Numpy
+- **Agentic AI**: LangGraph, Google Gemini 1.5 Flash
+- **Utility**: FPDF2 (PDF Generation), LangChain (RAG Framework)
+
+---
+
+## 📦 Setup & Installation
+
+1. **Clone & Install**
    ```bash
-   git clone <repository-url>
-   cd solar_forecasting
-   ```
-
-2. **Install dependencies**
-   ```bash
+   git clone <repo-url>
    pip install -r requirements.txt
    ```
 
-3. **Set up Google Gemini API**
-   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - The app will prompt for the API key in the sidebar
+2. **Configure API Keys**
+   - Obtain a Gemini API Key from [Google AI Studio](https://makersuite.google.com/app/apikey).
+   - Enter the key in the dashboard sidebar or set `GOOGLE_API_KEY` in your environment.
 
-4. **Run the application**
+3. **Run Locally**
    ```bash
    streamlit run app.py
    ```
 
-## Usage
+---
 
-1. **Explore Dashboard**: View real-time metrics and data visualizations
-2. **Make Predictions**: Input weather conditions to get solar power forecasts
-3. **AI Optimization**: Use the Ved AI agent for intelligent grid optimization recommendations
+## 👥 The Team (Team 13)
+- **Dhiraj (TL)**: Deployment, PDF Extension, & Documentation.
+- **Shorya**: ML Engine & Preprocessing Pipeline.
+- **Ved**: Agentic AI Workflow & RAG Logic.
+- **Himanshu**: UI/UX Design & Dashboard Integration.
 
-## AI Agent Architecture
+---
 
-The Ved AI agent uses a structured reasoning pipeline:
-
-1. **ForecastAnalyst**: Analyzes raw prediction data
-2. **KnowledgeRetriever**: Queries RAG system for relevant guidelines
-3. **GridOptimizer**: Synthesizes insights into actionable recommendations
-
-All outputs follow a consistent JSON schema for reliable integration.
-solar_forecasting/
-├── app.py                    # Main Streamlit dashboard
-├── src/
-│   ├── config.py             # App configuration and constants
-│   └── ui/
-│       ├── plots.py          # Plotly chart functions
-│       └── components.py     # Reusable UI components
-├── assets/
-│   └── style.css             # Custom dark theme styling
-├── data/
-│   └── spg.csv               # Solar power generation dataset
-├── models/
-│   └── solar_model.pkl       # Trained Random Forest model
-├── notebooks/
-│   └── solar_forecasting.ipynb
-├── .streamlit/
-│   └── config.toml           # Streamlit theme config
-└── requirements.txt
-```
-
-## Setup
-
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-## System Architecture
-
-```mermaid
-flowchart TD
-    A[Weather Data Input] --> B[Data Preprocessing]
-    B --> C[Machine Learning Model - Random Forest]
-    C --> D[Prediction Output]
-    D --> E[Evaluation MAE RMSE]
-    E --> F[Streamlit UI Display]
-    F --> G[Interactive Plotly Charts]
-    F --> H[24-Hour Simulation]
-    F --> I[Optimization Assistant]
-```
-
-## Team
-
-Built as a group project for AI/ML coursework.
+## 📝 Project Extension: Professional PDF Reporting
+As part of our Milestone 2 extension, we have implemented a **Solar Optimization Report Generator**. This utility captures the AI's complex reasoning and the forecast metrics, formatting them into a professional document for utility operators and solar plant managers.

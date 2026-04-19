@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import numpy as np
 import os
+from datetime import datetime
 
 from src.config import (
     APP_TITLE, APP_ICON, FEATURE_LABELS, COLORS,
@@ -20,6 +21,7 @@ from src.ui.plots import (
     create_power_distribution
 )
 from src.agent.graph import run_optimization_agent
+from src.utils.pdf_generator import generate_pdf_report
 
 st.set_page_config(
     page_title=APP_TITLE,
@@ -198,19 +200,21 @@ with tab2:
                 with col_s3:
                     render_metric_card("💰", "Monthly Savings", f"₹{monthly_savings:.0f}", f"@ ₹{ELECTRICITY_RATE}/kWh")
 
-                st.session_state['forecast_data'] = {
-                    'average_power': prediction,
-                    'daily_output': daily_kwh,
-                    'peak_power': max(sim_powers),
-                    'simulation': sim_powers.tolist(),
-                    'summary': f"Average {prediction:.0f} kW, daily {daily_kwh:.0f} kWh"
-                }
-                render_tip("This simulation shows how power generation would change throughout the day based on your weather inputs.")
-
                 with st.spinner("Generating 24-hour simulation..."):
                     fig_sim, sim_powers, sim_rads = create_24h_simulation(
                         model, final_inputs, feature_cols
                     )
+                    st.session_state['forecast_data'] = {
+                        'average_power': prediction,
+                        'daily_output': daily_kwh,
+                        'peak_power': max(sim_powers),
+                        'peak_hour': f"{sim_powers.index(max(sim_powers))}:00",
+                        'simulation': sim_powers,
+                        'summary': f"Average {prediction:.1f} kW, daily {daily_kwh:.0f} kWh",
+                        'daily_savings': (sum(sim_powers) / 1000) * ELECTRICITY_RATE
+                    }
+
+                    render_tip("This simulation shows how power generation would change throughout the day based on your weather inputs.")
                     st.plotly_chart(fig_sim, width="stretch")
 
                     peak_hour = sim_powers.index(max(sim_powers))
@@ -283,6 +287,17 @@ with tab3:
                     
                     st.markdown("### 📊 Detailed Report")
                     st.json(report)
+
+                    # PDF Export Button
+                    st.markdown("---")
+                    pdf_bytes = generate_pdf_report(st.session_state['forecast_data'], report)
+                    st.download_button(
+                        label="📥 Download Optimization Report (PDF)",
+                        data=pdf_bytes,
+                        file_name=f"solar_optimization_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
                     
                     # Clear pending
                     if pending:

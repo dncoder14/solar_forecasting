@@ -5,9 +5,10 @@ joblib
 plotly
 numpy
 langgraph
-google-genai
+google-generativeai
 faiss-cpu
 langchain
 langchain-google-genai
 langchain-community
 pydantic
+fpdf2
