@@ -81,12 +81,12 @@ with tab1:
         render_section_header("⚡ Power vs Solar Radiation")
         with st.spinner("Rendering power curve..."):
             fig_curve = create_power_curve(df)
-            st.plotly_chart(fig_curve, use_container_width=True)
+            st.plotly_chart(fig_curve, width="stretch")
 
     with col_right:
         render_section_header("🎯 Model Performance")
         fig_gauge = create_accuracy_gauge(MODEL_R2_SCORE)
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.plotly_chart(fig_gauge, width="stretch")
         st.markdown(f"""
         <div class="glass-card" style="text-align:center;">
             <span style="color:{COLORS['text_muted']};">Mean Absolute Error</span><br>
@@ -98,16 +98,13 @@ with tab1:
     col_dist, col_feat = st.columns(2)
     with col_dist:
         fig_dist = create_power_distribution(df)
-        st.plotly_chart(fig_dist, use_container_width=True)
+        st.plotly_chart(fig_dist, width="stretch")
     with col_feat:
         fig_imp = create_feature_importance_chart(df)
-        st.plotly_chart(fig_imp, use_container_width=True)
+        st.plotly_chart(fig_imp, width="stretch")
 
     with st.expander("📋 Dataset Summary"):
-        st.dataframe(
-            df.describe().round(2).T.style.background_gradient(cmap="YlOrRd"),
-            use_container_width=True
-        )
+        st.dataframe(df.describe().round(2).T)
 
 
 with tab2:
@@ -199,7 +196,7 @@ with tab2:
                     fig_sim, sim_powers, sim_rads = create_24h_simulation(
                         model, final_inputs, feature_cols
                     )
-                    st.plotly_chart(fig_sim, use_container_width=True)
+                    st.plotly_chart(fig_sim, width="stretch")
 
                     peak_hour = sim_powers.index(max(sim_powers))
                     total_daily = sum(sim_powers)
