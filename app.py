@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
+import os
 
 from src.config import (
     APP_TITLE, APP_ICON, FEATURE_LABELS, COLORS,
@@ -18,6 +19,7 @@ from src.ui.plots import (
     create_24h_simulation, create_feature_importance_chart,
     create_power_distribution
 )
+from src.agent.graph import run_optimization_agent
 
 st.set_page_config(
     page_title=APP_TITLE,
@@ -27,6 +29,14 @@ st.set_page_config(
 )
 
 load_css()
+
+with st.sidebar:
+    st.header("🔑 API Configuration")
+    api_key = st.text_input("Google Gemini API Key", type="password", help="Required for the AI Optimization Assistant")
+    if api_key:
+        os.environ["GOOGLE_API_KEY"] = api_key
+    st.markdown("---")
+    st.markdown("**Note:** Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
 
 
 @st.cache_data
@@ -188,8 +198,13 @@ with tab2:
                 with col_s3:
                     render_metric_card("💰", "Monthly Savings", f"₹{monthly_savings:.0f}", f"@ ₹{ELECTRICITY_RATE}/kWh")
 
-                st.markdown("<br>", unsafe_allow_html=True)
-                render_section_header("🕐 24-Hour Power Simulation")
+                st.session_state['forecast_data'] = {
+                    'average_power': prediction,
+                    'daily_output': daily_kwh,
+                    'peak_power': max(sim_powers),
+                    'simulation': sim_powers.tolist(),
+                    'summary': f"Average {prediction:.0f} kW, daily {daily_kwh:.0f} kWh"
+                }
                 render_tip("This simulation shows how power generation would change throughout the day based on your weather inputs.")
 
                 with st.spinner("Generating 24-hour simulation..."):
@@ -248,6 +263,36 @@ with tab3:
     user_query = st.text_input("Ask the assistant anything about solar optimization...", placeholder="e.g., How can I improve my panel efficiency?")
 
     pending = st.session_state.get("pending_prompt", None)
+
+    if pending or st.button("🚀 Run AI Optimization Analysis", use_container_width=True):
+        if 'forecast_data' in st.session_state:
+            with st.spinner("🤖 AI is analyzing your solar forecast and generating optimization recommendations..."):
+                try:
+                    uncertainty = "medium"  # Could be dynamic based on model confidence
+                    report = run_optimization_agent(st.session_state['forecast_data'], uncertainty)
+                    
+                    st.success("✅ Optimization Report Generated!")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("📋 Summary", report.get('summary', 'N/A')[:50] + '...')
+                    with col2:
+                        st.metric("⚠️ Risk Level", "Medium")  # Could parse from report
+                    with col3:
+                        st.metric("🎯 Actions", "Generated")
+                    
+                    st.markdown("### 📊 Detailed Report")
+                    st.json(report)
+                    
+                    # Clear pending
+                    if pending:
+                        del st.session_state["pending_prompt"]
+                        
+                except Exception as e:
+                    st.error(f"❌ Agent analysis failed: {str(e)}")
+                    st.info("Make sure GOOGLE_API_KEY is set in your environment variables.")
+        else:
+            st.warning("⚠️ Please run a solar power prediction first in the 'Weather & Analytics' tab to provide data for the AI assistant.")
 
     if user_query or pending:
         with st.spinner("Assistant is thinking..."):
