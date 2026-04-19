@@ -1,0 +1,7 @@
+Battery Storage Optimization:
+
+1. Charge batteries during low demand periods (off-peak hours).
+2. Discharge during peak demand to reduce grid load.
+3. Maintain state of charge between 20% and 80% for battery longevity.
+4. Consider weather forecasts for solar availability when planning storage.
+5. Implement predictive charging based on forecast data.

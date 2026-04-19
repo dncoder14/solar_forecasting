@@ -1,0 +1,7 @@
+Grid Stability Guidelines:
+
+1. Maintain grid frequency between 49.5 Hz and 50.5 Hz.
+2. Avoid sudden power fluctuations exceeding 10% of nominal capacity.
+3. Implement battery storage for peak shaving during high demand periods.
+4. Monitor voltage levels to prevent over/under voltage conditions.
+5. Use load balancing to distribute power evenly across phases.
