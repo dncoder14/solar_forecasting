@@ -1,0 +1,50 @@
+{
+  "model": "Random Forest",
+  "metrics": {
+    "mae": 254.8064,
+    "rmse": 398.3249,
+    "r2": 0.8263
+  },
+  "top_features": [
+    {
+      "feature": "angle_of_incidence",
+      "importance": 0.260094
+    },
+    {
+      "feature": "zenith",
+      "importance": 0.202577
+    },
+    {
+      "feature": "azimuth",
+      "importance": 0.116268
+    },
+    {
+      "feature": "shortwave_radiation_backwards_sfc",
+      "importance": 0.103808
+    },
+    {
+      "feature": "total_cloud_cover_sfc",
+      "importance": 0.088116
+    },
+    {
+      "feature": "mean_sea_level_pressure_MSL",
+      "importance": 0.033642
+    },
+    {
+      "feature": "relative_humidity_2_m_above_gnd",
+      "importance": 0.028665
+    },
+    {
+      "feature": "low_cloud_cover_low_cld_lay",
+      "importance": 0.026852
+    },
+    {
+      "feature": "temperature_2_m_above_gnd",
+      "importance": 0.021958
+    },
+    {
+      "feature": "wind_gust_10_m_above_gnd",
+      "importance": 0.018972
+    }
+  ]
+}
