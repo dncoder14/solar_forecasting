@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: solarvista-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python src/train.py
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: PYTHON_VERSION
+        value: 3.12.0
+    disk:
+      name: models
+      mountPath: /opt/render/project/src/models
+      sizeGB: 1

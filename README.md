@@ -1,98 +1,98 @@
 # ☀️ SolarVista — Intelligent Solar Management & Optimization
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge.svg)](https://huggingface.co/spaces/) <!-- Placeholder for Dhiraj to add HF link -->
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-green.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**SolarVista** is an end-to-end AI-driven platform designed to forecast solar energy generation and provide agentic optimization strategies for smarter grid management. By combining high-accuracy Machine Learning with Large Language Models (LLMs), SolarVista transforms raw weather data into actionable energy intelligence.
+**SolarVista** is an end-to-end AI-driven platform for solar energy forecasting and grid optimization. It combines a tuned Random Forest / XGBoost ML model with a LangGraph + Gemini AI agent, served through a FastAPI backend and a React + Tailwind frontend.
 
 ---
 
-## 🚀 Key Features
+## 🏗️ Architecture
 
-### 1. High-Accuracy Forecasting
-- **ML Engine**: Optimized Random Forest Regressor trained on 4200+ meteorological records.
-*   **Performance**: R² Score of **0.93** and MAE of **187.5 kW**.
-- **Preprocessing**: Robust pipeline handling temperature, radiation, and sun geometry.
-
-### 2. Agentic AI Optimization (Milestone 2)
-- **"Ved" AI Assistant**: A reasoning engine built with **LangGraph** that analyzes forecasts to suggest grid maneuvers.
-- **RAG Capability**: Uses **FAISS** vector search to ground AI advice in real-world grid stability guidelines.
-- **Structured Reports**: AI generates JSON-based optimization plans covering Battery Management, Risk Assessment, and Load Balancing.
-
-### 3. Professional Dashboard
-- **Interactive Visuals**: Rich Plotly charts for power curves, accuracy gauges, and 24-hour simulations.
-- **User-Centric Forms**: Grouped weather inputs for an intuitive desktop and mobile experience.
-- **Extension**: Automated **PDF Export** for professional energy optimization reports.
-
----
-
-## 🏗️ System Architecture
-
-```mermaid
-flowchart TD
-    subgraph Input_Layer
-        A[Weather API/User Input]
-    end
-
-    subgraph Intelligence_Layer
-        B[ML Engine - Random Forest]
-        C[Agentic AI - LangGraph]
-        D[RAG Knowledge Base - FAISS]
-    end
-
-    subgraph Output_Layer
-        E[Plotly Data Visuals]
-        F[Optimization Report]
-        G[PDF Export Utility]
-    end
-
-    A --> B
-    B --> C
-    D --> C
-    C --> F
-    B --> E
-    F --> G
+```
+solar_forecasting/
+├── backend/          # FastAPI REST API
+├── frontend/         # React + Vite + Tailwind UI
+├── src/
+│   ├── agent/        # LangGraph AI optimization agent
+│   ├── utils/        # PDF generator
+│   ├── config.py     # Feature labels, constants
+│   ├── data_preprocessing.py
+│   └── train.py      # ML training pipeline
+├── models/           # Trained model artefacts
+├── data/             # Dataset + RAG guidelines
+├── render.yaml       # Render deployment config
+└── requirements.txt
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Local Development
 
-- **Frontend**: Streamlit, Custom CSS
-- **Visualization**: Plotly
-- **Machine Learning**: Scikit-Learn, Joblib, Pandas, Numpy
-- **Agentic AI**: LangGraph, Google Gemini 1.5 Flash
-- **Utility**: FPDF2 (PDF Generation), LangChain (RAG Framework)
+### 1. Backend
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
----
+# Train the model first (generates models/)
+python3 src/train.py
 
-## 📦 Setup & Installation
+# Start the API
+uvicorn backend.main:app --reload --port 8000
+```
 
-1. **Clone & Install**
-   ```bash
-   git clone <repo-url>
-   pip install -r requirements.txt
-   ```
+### 2. Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-2. **Configure API Keys**
-   - Obtain a Gemini API Key from [Google AI Studio](https://makersuite.google.com/app/apikey).
-   - Enter the key in the dashboard sidebar or set `GOOGLE_API_KEY` in your environment.
-
-3. **Run Locally**
-   ```bash
-   streamlit run app.py
-   ```
+Open **http://localhost:5173**
 
 ---
 
-## 👥 The Team (Team 13)
-- **Dhiraj (TL)**: Deployment, PDF Extension, & Documentation.
-- **Shorya**: ML Engine & Preprocessing Pipeline.
-- **Ved**: Agentic AI Workflow & RAG Logic.
-- **Himanshu**: UI/UX Design & Dashboard Integration.
+## ☁️ Deployment
+
+### Backend → Render
+
+1. Go to [render.com](https://render.com) → **New Web Service**
+2. Connect your GitHub repo
+3. Set these values:
+   - **Root Directory**: `.` (project root)
+   - **Build Command**: `pip install -r requirements.txt && python3 src/train.py`
+   - **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Python Version**: `3.12.0`
+4. Add **Environment Variables** in the Render dashboard:
+   - `GOOGLE_API_KEY` → your Gemini API key
+   - `ALLOWED_ORIGINS` → your Vercel frontend URL (e.g. `https://solarvista.vercel.app`)
+5. Add a **Disk** (under Advanced):
+   - Mount path: `/opt/render/project/src/models`
+   - Size: 1 GB
+6. Click **Deploy**
+
+> The build command trains the model on first deploy and saves it to the persistent disk.
 
 ---
 
-## 📝 Project Extension: Professional PDF Reporting
-As part of our Milestone 2 extension, we have implemented a **Solar Optimization Report Generator**. This utility captures the AI's complex reasoning and the forecast metrics, formatting them into a professional document for utility operators and solar plant managers.
+### Frontend → Vercel
+
+1. Go to [vercel.com](https://vercel.com) → **New Project**
+2. Import your GitHub repo
+3. Set **Root Directory** to `frontend`
+4. Add **Environment Variable**:
+   - `VITE_API_URL` → your Render backend URL (e.g. `https://solarvista-api.onrender.com`)
+5. Click **Deploy**
+
+> Vercel auto-detects Vite. The `vercel.json` handles SPA routing rewrites.
+
+---
+
+## 👥 Team 13
+- **Dhiraj (TL)**: Deployment, PDF Extension & Documentation
+- **Shorya**: ML Engine & Preprocessing Pipeline
+- **Ved**: Agentic AI Workflow & RAG Logic
+- **Himanshu**: UI/UX Design & Dashboard Integration
